@@ -210,6 +210,55 @@
       "ariaLabel": "Show search filter",
       "type": "external",
       "hidden": false
+    },
+    {
+      "id": "external-nuova-nota",
+      "name": "Nuova nota",
+      "ariaLabel": "Nuova nota",
+      "type": "external",
+      "hidden": false
+    },
+    {
+      "id": "external-nuova-cartella",
+      "name": "Nuova cartella",
+      "ariaLabel": "Nuova cartella",
+      "type": "external",
+      "hidden": false
+    },
+    {
+      "id": "external-ordinamento",
+      "name": "Ordinamento",
+      "ariaLabel": "Ordinamento",
+      "type": "external",
+      "hidden": false
+    },
+    {
+      "id": "external-rivela-automaticamente-il-file-attuale",
+      "name": "Rivela automaticamente il file attuale",
+      "ariaLabel": "Rivela automaticamente il file attuale",
+      "type": "external",
+      "hidden": false
+    },
+    {
+      "id": "external-espandi-tutto",
+      "name": "Espandi tutto",
+      "ariaLabel": "Espandi tutto",
+      "type": "external",
+      "hidden": false
+    },
+    {
+      "id": "external-mostra-filtro-di-ricerca",
+      "name": "Mostra filtro di ricerca",
+      "ariaLabel": "Mostra filtro di ricerca",
+      "type": "external",
+      "hidden": false
+    },
+    {
+      "id": "external-comprimi-tutto",
+      "name": "Comprimi tutto",
+      "ariaLabel": "Comprimi tutto",
+      "type": "external",
+      "hidden": false
     }
   ],
   "nativeExplorerButtonColors": {},
