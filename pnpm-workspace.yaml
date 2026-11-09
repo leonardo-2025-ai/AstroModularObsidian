@@ -1,0 +1,17 @@
+allowBuilds:
+  esbuild: true
+  sharp: true
+  workerd: true
+minimumReleaseAgeExclude:
+  # Name-only patterns: an exact name@version misses astro's peer-suffixed
+  # lockfile key, so the exemption silently fails. Bare names match reliably.
+  - astro
+  - pele
+  - '@astrojs/markdown-satteri'
+  - '@astrojs/mdx'
+  - vscode-languageserver-protocol
+  - '@astrojs/internal-helpers@0.11.0 || 0.13.0'
+  - '@astrojs/markdown-remark@7.3.0 || 7.3.3'
+  - '@astrojs/sitemap@3.7.4'
+  - '@astrojs/prism@4.1.0'
+  - '@astrojs/telemetry@3.4.0'

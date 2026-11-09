@@ -1,0 +1,91 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate, processMarkdown, isValidDate } from '../utils/markdown';
+import { siteConfig } from '../config';
+import { resolveCoverImage } from '@/utils/images';
+import ImageWrapper from './ImageWrapper.astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  documentation: CollectionEntry<'docs'>;
+  featured?: boolean;
+  eager?: boolean;
+  context?: 'featured' | 'recent' | 'docs' | 'tags' | 'home';
+}
+
+const { documentation, featured = false, eager = false, context = 'docs' } = Astro.props;
+
+// Get excerpt from markdown processing
+const { excerpt } = processMarkdown(documentation.body);
+
+const { title, description: rawDescription, lastModified, image, imageAlt, category, version } = documentation.data;
+
+const cover = resolveCoverImage(image, 'docs', documentation.id);
+
+const description = rawDescription || excerpt;
+
+// Determine if we should show the cover image
+// Documentation should always show images when available (not controlled by postOptions)
+const shouldShowCoverImage = true;
+
+// Hide images for docs on homepage for cleaner look
+const showCoverImage = shouldShowCoverImage && cover && context !== 'home';
+---
+
+<div class="group relative bg-white dark:bg-primary-800 rounded-lg border border-primary-200 dark:border-primary-700 hover:shadow-lg transition-all duration-300 h-full flex flex-col">
+  <a href={`/docs/${documentation.id}`} class="block flex flex-col h-full hover:opacity-100" aria-label={`View documentation: ${title}`}>
+    <!-- Header with icon and version -->
+    <div class="flex items-center justify-between p-4 pb-2">
+      <Icon name="book-text" class="w-4 h-4 text-primary-500 dark:text-primary-400" />
+      {version && (
+        <span class="text-xs text-primary-500 dark:text-primary-400 font-mono bg-primary-100 dark:bg-primary-700 px-2 py-1 rounded">
+          v{version}
+        </span>
+      )}
+    </div>
+
+    <!-- Cover Image (if exists) -->
+    {cover && showCoverImage && (
+      <div class="px-4 pb-2">
+        <div class="relative overflow-hidden rounded-md">
+          <ImageWrapper
+            src={cover.src}
+            basePath={cover.basePath}
+            alt={imageAlt || `Cover image for documentation: ${title}`}
+            width={400}
+            height={200}
+            loading={eager ? 'eager' : 'lazy'}
+            fetchpriority={eager ? 'high' : 'auto'}
+            class="w-full h-32 object-cover group-hover:brightness-95 transition-[filter] duration-300"
+          />
+        </div>
+      </div>
+    )}
+
+    <!-- Content -->
+    <div class="p-4 pt-2 flex-grow flex flex-col">
+      <!-- Title -->
+      <h3 class="text-lg font-semibold text-primary-900 dark:text-primary-50 mb-2 group-hover:text-highlight-600 dark:group-hover:text-highlight-400 transition-colors line-clamp-2">
+        {title}
+      </h3>
+
+      <!-- Description -->
+      {description && (
+        <p class="text-sm text-primary-600 dark:text-primary-300 mb-3 line-clamp-3">
+          {description}
+        </p>
+      )}
+
+      <!-- Footer -->
+      {lastModified && (
+        <div class="pt-2 border-t border-primary-200 dark:border-primary-700 mt-auto">
+          {isValidDate(lastModified) && (
+            <time datetime={lastModified.toISOString()} class="text-xs text-primary-500 dark:text-primary-400">
+              Updated {formatDate(lastModified)}
+            </time>
+          )}
+        </div>
+      )}
+    </div>
+  </a>
+</div>

@@ -1,0 +1,197 @@
+# Astro Modular
+
+A flexible [Astro](https://astro.build) blog theme designed for [Obsidian](https://obsidian.md) users. 
+
+[![Alt](https://github.com/user-attachments/assets/612b2171-d141-412b-a891-5b1caa1447b8 "Astro Modular theme shown off in 3 screenshots, with the left screenshot showing the homepage, the top right showing the bottom of a post, and the bottom right showing a minimal homepage")](https://astro.build/themes/details/astro-modular/)
+
+## Made with Vault CMS
+
+Use Obsidian as a CMS with [Vault CMS](https://github.com/davidvkimball/vault-cms).
+
+![Alt](https://github.com/user-attachments/assets/3db459e6-6b9a-4c37-b86d-0f661e88e204 "Astro Modular Obsidian vault")
+
+Rather not use Obsidian? [Zeku](https://zeku.dev) is a standalone writing app for Astro sites from the same developer, and it opens this theme with its settings as a form.
+
+## Stats
+
+![Alt](https://repobeats.axiom.co/api/embed/66fe41c94d95b32b92c1a2fd8d6dc83d386bc10a.svg "Repobeats analytics image")
+
+![Alt](https://github.com/user-attachments/assets/e09c8ee1-6f91-46d6-84a5-e2d8a35c1e14 "Pagespeed scores")
+
+
+### Status
+[![Netlify Status](https://api.netlify.com/api/v1/badges/3f849f7a-71e6-463b-84af-01c523012348/deploy-status)](https://app.netlify.com/sites/astro-modular/deploys)
+[![GitHub last commit](https://img.shields.io/github/last-commit/davidvkimball/astro-modular/master)](https://github.com/davidvkimball/astro-modular)
+[![GitHub commit activity](https://img.shields.io/github/commit-activity/m/davidvkimball/astro-modular)](https://github.com/davidvkimball/astro-modular)
+
+### Tech Stack
+[![Astro](https://img.shields.io/badge/Astro-6.0.0--beta.1-FF5D01?logo=astro&logoColor=white)](https://astro.build/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9.2-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.17-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Node.js](https://img.shields.io/badge/Node.js-24.13.0-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![pnpm](https://img.shields.io/badge/pnpm-10.29.3-F69220?logo=pnpm&logoColor=white)](https://pnpm.io/)
+[![Obsidian](https://img.shields.io/badge/Obsidian-1.12.2-7C3AED?logo=obsidian&logoColor=white)](https://obsidian.md/)
+
+## Why Astro Modular?
+
+- **Obsidian As A CMS**: Works with Obsidian out of the box (built upon [Vault CMS](https://github.com/davidvkimball/vault-cms)), write and publish instantly
+- **Highly Customizable**: Every feature can be enabled/disabled independently
+- **Performance-Focused**: Assets are highly optimized for lightning-fast loading
+- **SEO-Ready**: Automatic sitemap, RSS feed, and Open Graph image generation
+
+## Features
+
+- [x] **Custom Themes** 
+- [x] **Feature Toggle Control** 
+- [x] **Dark/Light Mode** 
+- [x] **Search & Command Palette** 
+- [x] **Wikilinks & Linked Mentions** 
+- [x] **Obsidian-Style Callouts**
+- [x] **Obsidian Embeds Files**
+- [x] **Folder-Based Posts** 
+- [x] **Multiple Content Types**
+- [x] **Image Optimization** 
+- [x] **Automatic Feed Generation**
+- [x] **Table of Contents** 
+- [x] **Smooth Scroll & Page Transitions** 
+- [x] **Image Gallery & Lightbox** 
+- [x] **Reading Time & Word Count** 
+- [x] **Tagging**
+- [x] **Graph View**
+- [x] **Mermaid Diagrams**
+- [x] **LaTeX & Math Rendering** 
+- [x] **Custom Typography**
+- [x] **Profile Picture** 
+- [x] **Comments**
+
+## Quick Start
+
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/davidvkimball/astro-modular)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/davidvkimball/astro-modular)
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/davidvkimball/astro-modular)
+
+> [!IMPORTANT]
+> **Vault CMS is already included.** Astro Modular ships with Vault CMS and every Obsidian plugin it uses, preconfigured in `src/content/.obsidian/`. Don't install Vault CMS separately: its installer copies its own `.obsidian` and `_bases` folders over the ones bundled here.
+
+### What you need
+
+- [Obsidian](https://obsidian.md) to write.
+- [Git](https://git-scm.com/) and a [GitHub](https://github.com) account to publish. The setup wizard in Obsidian creates the GitHub repository for you.
+- A host such as Netlify, Vercel, or Cloudflare. The host builds your site from GitHub, so publishing needs nothing else installed on your computer.
+- **Optional:** Node.js 24.13.0+ and pnpm 10.29.3+. You only need these to preview the site on your own computer or to use the command-line install below.
+
+### Get the code
+
+Pick whichever option suits you. They all give you the same theme.
+
+#### Option 1: Download the ZIP (no command line)
+
+1. Open the [latest release](https://github.com/davidvkimball/astro-modular/releases/latest).
+2. Under **Assets**, download **Source code (zip)**, then extract it wherever you want your site's project folder to live.
+3. In Obsidian, select **Open folder as vault** and choose the `src/content` folder inside the extracted project.
+4. When Obsidian asks, trust the author and enable plugins. The setup wizard then walks you through your site settings, GitHub, and deployment.
+
+#### Option 2: Command line
+
+Requires Node.js and pnpm.
+
+```bash
+pnpm create astro-modular my-blog
+```
+
+[![npm version](https://img.shields.io/npm/v/create-astro-modular)](https://www.npmjs.com/package/create-astro-modular)
+
+This downloads the latest release, removes dev-only files, and installs dependencies. Then open `my-blog/src/content` as a vault in Obsidian, as in step 3 above.
+
+#### Option 3: GitHub template
+
+1. Click the **"Use this template"** button on the [repository page](https://github.com/davidvkimball/astro-modular)
+2. Select **"Create a new repository"**
+3. Choose your repository name and settings
+4. Click **"Create repository from template"**
+5. Clone your new repository:
+   ```bash
+   git clone https://github.com/your-username/your-repo-name.git
+   cd your-repo-name
+   ```
+
+> [!IMPORTANT]
+> After cloning, confirm that `src/content/.obsidian/` exists and contains a `plugins` folder. The Obsidian vault lives in a dotfolder, and the template button does not always copy dotfolders. If it is missing or empty, the setup wizard will have no plugins to configure, and new notes will be created without frontmatter.
+>
+> Dotfolders are hidden by default, so check with `ls -a src/content` (macOS and Linux) or `dir /a src\content` (Windows). Options 1 and 2 avoid this entirely.
+
+> [!NOTE]
+> While this theme works great with any markdown editor, it's specifically optimized for Obsidian use. See the [Vault CMS Guide](src/content/posts/vault-cms-guide.md) for Obsidian-specific features.
+
+### Preview on your computer (optional)
+
+Your host builds and publishes the site, so this step is only for seeing changes before you publish. It requires Node.js and pnpm. Run these commands from the project folder (the one that contains `package.json`):
+
+1. **Install pnpm (if you don't have it):**
+   ```bash
+   npm install -g pnpm
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   pnpm install
+   ```
+
+3. **Preview:**
+   ```bash
+   pnpm dev
+   ```
+   Your blog will be available at `http://localhost:5000`
+
+4. **Build for production:**
+   ```bash
+   pnpm build
+   ```
+
+### Updating the theme
+
+To pull the latest theme release (framework files, Astro, config) while keeping your content and assets:
+
+```bash
+pnpm run update
+```
+
+This downloads the latest release from GitHub, replaces framework files, restores your `src/content` and profile/favicon assets, then runs `pnpm install`. After updating, open Obsidian and use **Astro Modular Settings → Apply all settings** so your saved settings are written to the new `config.ts` if needed.
+
+### Configuration
+
+Edit `src/config.ts` to customize your site - change the theme, enable/disable features, and configure all settings. In Obsidian, the Astro Modular Settings plugin edits the same file, and so does the theme settings screen in [Zeku](https://zeku.dev).
+
+## Deployment
+
+Set your deployment platform once in `src/config.ts` under `deployment.platform` ("netlify", "vercel", "github-pages", or "cloudflare-workers"). The build process automatically generates the correct configuration files for your chosen platform - no environment variables needed!
+
+## Documentation
+
+For detailed guides, see the included blog posts:
+- **[Getting Started](src/content/posts/getting-started.md)** - complete setup and workflow guide
+- **[Formatting Reference](src/content/posts/formatting-reference.md)** - comprehensive formatting reference  
+- **[Vault CMS Guide](src/content/posts/vault-cms-guide.md)** - Obsidian vault walkthrough
+- **[Obsidian Embeds Demo](src/content/posts/obsidian-embeds-demo.md)** - Obsidian embed examples
+
+**For AI Agents & Developers:** See [AGENTS.md](AGENTS.md) for comprehensive technical documentation.
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=davidvkimball/astro-modular&type=date&legend=top-left)](https://www.star-history.com/#davidvkimball/astro-modular&type=date&legend=top-left)
+
+## Acknowledgments 
+
+[Spaceship Astro theme](https://github.com/aitorllj93/astro-theme-spaceship) for the graph view functionality upon which this theme's is based.
+
+[ogImage.click](https://ogimage.click/) to generate the open graph image used for this theme.
+
+## Contributing
+
+This is an open-source project. Feel free to submit feature requests, report bugs, or contribute improvements.
+
+If you are contributing code back to the theme itself, please fork the repository and submit a Pull Request. **Do not fork the repository if you are just building your own site from this template.**
+
+## License
+
+[MIT License](https://github.com/davidvkimball/astro-modular?tab=MIT-1-ov-file)
