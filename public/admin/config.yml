@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: tuonomeutente/tuorepo # <-- sostituisci con il repo reale prima del deploy
+  repo: leonardo-2025-ai/AstroModularObsidian
   branch: main
 
 media_folder: "public/images"
