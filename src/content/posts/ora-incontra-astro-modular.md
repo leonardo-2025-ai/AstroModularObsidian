@@ -1,5 +1,5 @@
 ---
-title: Incontra Astro Modular
+title: "Ora Incontra Astro Modular"
 date: 2026-10-26
 description: Astro Modular in under a minute. Switch on the features you need, pick from 17 color themes, and publish your Obsidian vault, free and open source.
 tags:
@@ -16,6 +16,7 @@ draft: false
 aliases:
   - meet-astro-modular
 ---
+
 
 ![Astro Modular: a free Astro blog theme for Obsidian users](https://www.youtube.com/watch?v=ECEU3BpSYY4)
 

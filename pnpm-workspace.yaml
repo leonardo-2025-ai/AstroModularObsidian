@@ -1,3 +1,6 @@
+packages:
+  - "."
+
 allowBuilds:
   esbuild: true
   sharp: true
@@ -15,3 +18,5 @@ minimumReleaseAgeExclude:
   - '@astrojs/sitemap@3.7.4'
   - '@astrojs/prism@4.1.0'
   - '@astrojs/telemetry@3.4.0'
+
+

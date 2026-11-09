@@ -12,11 +12,11 @@
     }
   },
   "siteInfo": {
-    "site": "https://astro-modular.netlify.app",
-    "title": "Astro Modular",
+    "site": "https://astromodularobsidian.leonardo-2025-ai.workers.dev/",
+    "title": "Astro Modular Obsidian",
     "description": "A flexible blog theme designed for Obsidian users.",
-    "author": "David V. Kimball",
-    "language": "en",
+    "author": "Leonardo",
+    "language": "it",
     "faviconThemeAdaptive": true,
     "defaultOgImageAlt": "Astro Modular logo."
   },
@@ -226,7 +226,7 @@
     }
   },
   "deployment": {
-    "platform": "netlify"
+    "platform": "cloudflare-workers"
   },
   "pluginConfig": {
     "obsidianSettings": {
