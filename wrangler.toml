@@ -4,7 +4,7 @@
 
 # You can rename this to your desired project name (e.g., "my-blog", "my-website")
 # This name will be used for your Cloudflare Worker deployment
-name = "astro-modular"
+name = "astromodularobsidian"
 compatibility_date = "2025-01-15"
 
 [assets]

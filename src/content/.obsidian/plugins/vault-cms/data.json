@@ -296,6 +296,8 @@
     "branchName": "main",
     "autoConfigureObsidianGit": true
   },
+  "deploymentPlatform": "",
+  "resolvePublicImages": false,
   "runWizardOnStartup": false,
   "wizardCompleted": true,
   "enableMdxSupport": false,

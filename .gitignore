@@ -49,8 +49,8 @@ ehthumbs.db
 .DS_Store
 
 # Obsidian workspace files
-src/content/.obsidian/workspace.json
-src/content/.obsidian/workspace-mobile.json
+src/content**/.obsidian/workspace.json
+src/content**/.obsidian/workspace-mobile.json
 obsidian_askpass.sh
 
 # Playwright MCP scratch snapshots
