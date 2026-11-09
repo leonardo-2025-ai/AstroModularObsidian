@@ -3,8 +3,43 @@ backend:
   repo: leonardo-2025-ai/AstroModularObsidian
   branch: main
 
-media_folder: "public/images"
-public_folder: "/images"
+media_folder: "src/content/posts/attachments"
+public_folder: "/posts/attachments"
+
+media_libraries:
+  all:
+    slugify_filename: true
+    transformations:
+      raster_image:
+        format: webp
+        quality: 85
+
+# Cartelle esistenti del vault, mostrate in sola lettura nel selettore immagini.
+asset_collections:
+  - name: "posts_assets"
+    label: "Immagini dei post"
+    icon: "image"
+    media_folder: "/src/content/posts"
+    public_folder: "/posts"
+    readonly: true
+  - name: "pages_assets"
+    label: "Immagini delle pagine"
+    icon: "image"
+    media_folder: "/src/content/pages"
+    public_folder: "/pages"
+    readonly: true
+  - name: "projects_assets"
+    label: "Immagini dei progetti"
+    icon: "image"
+    media_folder: "/src/content/projects"
+    public_folder: "/projects"
+    readonly: true
+  - name: "docs_assets"
+    label: "Immagini della documentazione"
+    icon: "image"
+    media_folder: "/src/content/docs"
+    public_folder: "/docs"
+    readonly: true
 
 output:
   omit_empty_optional_fields: true
@@ -52,6 +87,8 @@ collections:
     label_singular: "Post"
     icon: "article"
     folder: "src/content/posts"
+    media_folder: "attachments"
+    public_folder: "/posts/attachments"
     create: true
     slug: "{{slug}}"
     identifier_field: "title"
@@ -100,6 +137,8 @@ collections:
     label_singular: "Pagina"
     icon: "description"
     folder: "src/content/pages"
+    media_folder: "attachments"
+    public_folder: "/pages/attachments"
     create: true
     slug: "{{slug}}"
     identifier_field: "title"
@@ -122,6 +161,8 @@ collections:
     label_singular: "Progetto"
     icon: "work"
     folder: "src/content/projects"
+    media_folder: "attachments"
+    public_folder: "/projects/attachments"
     create: true
     slug: "{{slug}}"
     identifier_field: "title"
@@ -149,6 +190,8 @@ collections:
     label_singular: "Documento"
     icon: "menu_book"
     folder: "src/content/docs"
+    media_folder: "attachments"
+    public_folder: "/docs/attachments"
     create: true
     slug: "{{slug}}"
     identifier_field: "title"
@@ -174,6 +217,8 @@ collections:
     label: "Pagine speciali"
     label_singular: "Pagina speciale"
     icon: "star"
+    media_folder: "/src/content/special/attachments"
+    public_folder: "/special/attachments"
     files:
       - label: "Home"
         name: "home"
