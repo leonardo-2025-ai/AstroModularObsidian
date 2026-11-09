@@ -3,6 +3,6 @@ title: Homepage
 description:
 ---
 %%The title and description frontmatter properties are not used for SEO. Set homepageTitle in config.ts for the homepage meta title.%%
-## Thanks for Reading
+Grazie
 
-If you're looking for more, check out the [posts](/posts/) page.
+Per maggiori info guarda la pagin dei [posts](special/posts.md)
