@@ -19,7 +19,8 @@
     "update": "node scripts/update.mjs",
     "version": "node scripts/get-version.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "check:files": "node scripts/check-truncated-files.js"
+    "check:files": "node scripts/check-truncated-files.js",
+    "setup:cloudflare": "node scripts/setup-cloudflare.mjs"
   },
   "keywords": [
     "astro",
