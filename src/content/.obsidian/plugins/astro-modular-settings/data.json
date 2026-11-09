@@ -1,5 +1,5 @@
 {
-  "runWizardOnStartup": true,
+  "runWizardOnStartup": false,
   "currentTemplate": "standard",
   "currentTheme": "oxygen",
   "customThemeFile": "custom",
@@ -37,7 +37,7 @@
   },
   "navigation": {
     "showNavigation": true,
-    "style": "traditional",
+    "style": "minimal",
     "showMobileMenu": true,
     "pages": [
       {

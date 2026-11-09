@@ -17,14 +17,8 @@ aliases:
   - meet-astro-modular
   - incontra-astro-modular
   - ora-incontra-astro-modular
-  - astro-modular
   - astro-modular-porco
 ---
-
-
-
-
-
 ![Astro Modular: a free Astro blog theme for Obsidian users](https://www.youtube.com/watch?v=ECEU3BpSYY4)
 
 Astro Modular in under a minute. Here's what the video covers.

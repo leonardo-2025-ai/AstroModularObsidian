@@ -1,0 +1,217 @@
+backend:
+  name: github
+  repo: tuonomeutente/tuorepo # <-- sostituisci con il repo reale prima del deploy
+  branch: main
+
+media_folder: "public/images"
+public_folder: "/images"
+
+output:
+  omit_empty_optional_fields: true
+
+field_defaults:
+  richtext:
+    modes: [rich_text]
+    allow_nested_components: exclude_self
+    buttons:
+      [
+        bold,
+        italic,
+        strikethrough,
+        code,
+        heading-one,
+        heading-two,
+        heading-three,
+        heading-four,
+        heading-five,
+        heading-six,
+        bulleted-list,
+        numbered-list,
+        quote,
+      ]
+    editor_components:
+      [
+        code-block,
+        code-snippet,
+        image,
+        table,
+        hr,
+        notice,
+        internal-link,
+        button,
+        accordion,
+        tabs,
+        map,
+        youtube,
+      ]
+
+collections:
+  # 1. Post
+  - name: "posts"
+    label: "Post"
+    label_singular: "Post"
+    icon: "article"
+    folder: "src/content/posts"
+    create: true
+    slug: "{{slug}}"
+    identifier_field: "title"
+    summary: "{{title}} · {{date | date('MMM D, YYYY')}}"
+    thumbnail: "image"
+    sortable_fields:
+      fields: [title, date, author]
+      default:
+        field: date
+        direction: descending
+    view_filters:
+      filters:
+        - name: pubblicati
+          label: "Pubblicati"
+          field: draft
+          pattern: false
+        - name: bozze
+          label: "Bozze"
+          field: draft
+          pattern: true
+    table_columns:
+      - title
+      - { field: "{{date | date('MMM D, YYYY')}}", label: "Data" }
+      - author
+      - tags
+      - draft
+    fields:
+      - { label: "Titolo", name: "title", widget: "string" }
+      - { label: "Descrizione", name: "description", widget: "text", required: false, hint: "Usata per SEO e anteprime." }
+      - { label: "Data", name: "date", widget: "datetime", type: "date", format: "YYYY-MM-DD", default: "{{now}}", hint: "Data di pubblicazione." }
+      - { label: "Immagine", name: "image", widget: "image", required: false, hint: "Cover del post." }
+      - { label: "Alt immagine", name: "imageAlt", widget: "string", required: false }
+      - { label: "Usa cover come OG", name: "imageOG", widget: "boolean", required: false }
+      - { label: "Autore", name: "author", widget: "string", required: false }
+      - { label: "Tag", name: "tags", widget: "tags", required: false, hint: "Tag del post." }
+      - { label: "Nascondi cover", name: "hideCoverImage", widget: "boolean", required: false, default: false }
+      - { label: "Nascondi TOC", name: "hideTOC", widget: "boolean", required: false, default: false }
+      - { label: "Keyword target", name: "targetKeyword", widget: "string", required: false }
+      - { label: "No index", name: "noIndex", widget: "boolean", required: false, default: false }
+      - { label: "Bozza", name: "draft", widget: "boolean", default: false }
+      - { label: "Contenuto", name: "body", widget: "markdown", hint: "Usa i pulsanti Tip/Avviso e Link interno nella toolbar." }
+
+  # 2. Pagine
+  - name: "pages"
+    label: "Pagine"
+    label_singular: "Pagina"
+    icon: "description"
+    folder: "src/content/pages"
+    create: true
+    slug: "{{slug}}"
+    identifier_field: "title"
+    summary: "{{title}}"
+    fields:
+      - { label: "Titolo", name: "title", widget: "string" }
+      - { label: "Descrizione", name: "description", widget: "text", required: false }
+      - { label: "Data modifica", name: "lastModified", widget: "datetime", type: "date", format: "YYYY-MM-DD", required: false }
+      - { label: "Immagine", name: "image", widget: "image", required: false }
+      - { label: "Alt immagine", name: "imageAlt", widget: "string", required: false }
+      - { label: "Nascondi cover", name: "hideCoverImage", widget: "boolean", required: false, default: false }
+      - { label: "Nascondi TOC", name: "hideTOC", widget: "boolean", required: false, default: false }
+      - { label: "No index", name: "noIndex", widget: "boolean", required: false, default: false }
+      - { label: "Bozza", name: "draft", widget: "boolean", required: false, default: false }
+      - { label: "Contenuto", name: "body", widget: "markdown" }
+
+  # 3. Progetti
+  - name: "projects"
+    label: "Progetti"
+    label_singular: "Progetto"
+    icon: "work"
+    folder: "src/content/projects"
+    create: true
+    slug: "{{slug}}"
+    identifier_field: "title"
+    summary: "{{title}}"
+    fields:
+      - { label: "Titolo", name: "title", widget: "string" }
+      - { label: "Descrizione", name: "description", widget: "text", required: false }
+      - { label: "Data", name: "date", widget: "datetime", type: "date", format: "YYYY-MM-DD", default: "{{now}}", required: false }
+      - { label: "Categorie", name: "categories", widget: "tags", taxonomy_key: "categories", required: false }
+      - { label: "URL repository", name: "repositoryUrl", widget: "string", required: false }
+      - { label: "URL demo", name: "demoUrl", widget: "string", required: false }
+      - { label: "Stato", name: "status", widget: "string", required: false, hint: "Es. completed, in-progress." }
+      - { label: "Immagine", name: "image", widget: "image", required: false }
+      - { label: "Alt immagine", name: "imageAlt", widget: "string", required: false }
+      - { label: "Nascondi cover", name: "hideCoverImage", widget: "boolean", required: false, default: false }
+      - { label: "Nascondi TOC", name: "hideTOC", widget: "boolean", required: false, default: false }
+      - { label: "In evidenza", name: "featured", widget: "boolean", required: false, default: false }
+      - { label: "No index", name: "noIndex", widget: "boolean", required: false, default: false }
+      - { label: "Bozza", name: "draft", widget: "boolean", required: false, default: false }
+      - { label: "Contenuto", name: "body", widget: "markdown" }
+
+  # 4. Documentazione
+  - name: "docs"
+    label: "Documentazione"
+    label_singular: "Documento"
+    icon: "menu_book"
+    folder: "src/content/docs"
+    create: true
+    slug: "{{slug}}"
+    identifier_field: "title"
+    summary: "{{title}}"
+    fields:
+      - { label: "Titolo", name: "title", widget: "string" }
+      - { label: "Descrizione", name: "description", widget: "text", required: false }
+      - { label: "Categoria", name: "category", widget: "string", required: false, default: "General" }
+      - { label: "Ordine", name: "order", widget: "number", value_type: int, default: 0 }
+      - { label: "Ultima modifica", name: "lastModified", widget: "datetime", type: "date", format: "YYYY-MM-DD", required: false }
+      - { label: "Versione", name: "version", widget: "string", required: false }
+      - { label: "Immagine", name: "image", widget: "image", required: false }
+      - { label: "Alt immagine", name: "imageAlt", widget: "string", required: false }
+      - { label: "Nascondi cover", name: "hideCoverImage", widget: "boolean", required: false, default: false }
+      - { label: "Nascondi TOC", name: "hideTOC", widget: "boolean", required: false, default: false }
+      - { label: "In evidenza", name: "featured", widget: "boolean", required: false, default: false }
+      - { label: "No index", name: "noIndex", widget: "boolean", required: false, default: false }
+      - { label: "Bozza", name: "draft", widget: "boolean", required: false, default: false }
+      - { label: "Contenuto", name: "body", widget: "markdown" }
+
+  # 5. Pagine speciali
+  - name: "special"
+    label: "Pagine speciali"
+    label_singular: "Pagina speciale"
+    icon: "star"
+    files:
+      - label: "Home"
+        name: "home"
+        file: "src/content/special/home.md"
+        fields:
+          - { label: "Titolo", name: "title", widget: "string", required: false }
+          - { label: "Descrizione", name: "description", widget: "text", required: false }
+          - { label: "Nascondi TOC", name: "hideTOC", widget: "boolean", required: false, default: false }
+          - { label: "Contenuto", name: "body", widget: "markdown" }
+      - label: "404"
+        name: "404"
+        file: "src/content/special/404.md"
+        fields:
+          - { label: "Titolo", name: "title", widget: "string", required: false }
+          - { label: "Descrizione", name: "description", widget: "text", required: false }
+          - { label: "Nascondi TOC", name: "hideTOC", widget: "boolean", required: false, default: false }
+          - { label: "Contenuto", name: "body", widget: "markdown" }
+      - label: "Indice post"
+        name: "posts"
+        file: "src/content/special/posts.md"
+        fields:
+          - { label: "Titolo", name: "title", widget: "string", required: false }
+          - { label: "Descrizione", name: "description", widget: "text", required: false }
+          - { label: "Nascondi TOC", name: "hideTOC", widget: "boolean", required: false, default: false }
+          - { label: "Contenuto", name: "body", widget: "markdown" }
+      - label: "Indice progetti"
+        name: "projects"
+        file: "src/content/special/projects.md"
+        fields:
+          - { label: "Titolo", name: "title", widget: "string", required: false }
+          - { label: "Descrizione", name: "description", widget: "text", required: false }
+          - { label: "Nascondi TOC", name: "hideTOC", widget: "boolean", required: false, default: false }
+          - { label: "Contenuto", name: "body", widget: "markdown" }
+      - label: "Indice docs"
+        name: "docs"
+        file: "src/content/special/docs.md"
+        fields:
+          - { label: "Titolo", name: "title", widget: "string", required: false }
+          - { label: "Descrizione", name: "description", widget: "text", required: false }
+          - { label: "Nascondi TOC", name: "hideTOC", widget: "boolean", required: false, default: false }
+          - { label: "Contenuto", name: "body", widget: "markdown" }

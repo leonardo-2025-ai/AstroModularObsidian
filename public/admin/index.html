@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestione Contenuti - Sveltia CMS</title>
+  <style>
+    .cms-focus-button {
+      margin-left: 8px;
+      padding: 4px 10px;
+      border: 1px solid currentColor;
+      border-radius: 4px;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      cursor: pointer;
+    }
+    .cms-focus-button:hover {
+      opacity: 0.75;
+    }
+    .cms-focus-floating {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 9999;
+      padding: 8px 14px;
+      border: none;
+      border-radius: 999px;
+      background: CanvasText;
+      color: Canvas;
+      font: inherit;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+    .sui.text-editor:fullscreen {
+      background: Canvas;
+      color: CanvasText;
+      padding: 1.5rem 2rem;
+      overflow: auto;
+    }
+    /* Inline code: make it readable in both light and dark themes.
+       Code blocks keep their syntax highlighting. */
+    .sui.text-editor code,
+    .sui.text-editor .code {
+      color: #d63384;
+      background: rgba(0, 0, 0, 0.06);
+      border-radius: 3px;
+      padding: 1px 4px;
+    }
+    .sui.text-editor .code-block,
+    .sui.text-editor .code-block code {
+      color: inherit;
+      background: transparent;
+      border-radius: 0;
+      padding: 0;
+    }
+    .dark .sui.text-editor code,
+    .dark .sui.text-editor .code,
+    [data-theme="dark"] .sui.text-editor code,
+    [data-theme="dark"] .sui.text-editor .code {
+      color: #ff79c6;
+      background: rgba(255, 255, 255, 0.08);
+    }
+    @media (prefers-color-scheme: dark) {
+      .sui.text-editor code,
+      .sui.text-editor .code {
+        color: #ff79c6;
+        background: rgba(255, 255, 255, 0.08);
+      }
+    }
+    /* Hide the relation “Add/Edit” quick actions inside dialogs.
+       The Link component uses the dropdown selector only. */
+    dialog [class~="wrapper"] > [class~="actions"],
+    [role="dialog"] [class~="wrapper"] > [class~="actions"] {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    window.CMS_MANUAL_INIT = true;
+  </script>
+  <script src="https://unpkg.com/@sveltia/cms@0.261.0/dist/sveltia-cms.js"></script>
+  <script>
+    const { CMS } = window;
+
+    // Componente: Callout Obsidian (inserisce un blocco > [!tip] ... )
+    CMS.registerEditorComponent({
+      id: "notice",
+      label: "Callout / Avviso",
+      icon: "campaign",
+      trigger: "button",
+      fields: [
+        {
+          name: "type",
+          label: "Tipo",
+          widget: "select",
+          options: [
+            { label: "Tip (suggerimento)", value: "tip" },
+            { label: "Info", value: "info" },
+            { label: "Nota", value: "note" },
+            { label: "Attenzione", value: "warning" },
+            { label: "Pericolo", value: "danger" },
+            { label: "Successo", value: "success" },
+          ],
+          default: "tip",
+        },
+        { name: "text", label: "Testo", widget: "richtext" },
+      ],
+      pattern: /^> \[!(?<type>note|tip|info|warning|danger|success)\]\n(?<text>(?:> .*(?:\n|$))*)/m,
+      fromBlock: (match) => {
+        const type = match.groups?.type ?? "tip";
+        const raw = match.groups?.text ?? "";
+        const text = raw
+          .split("\n")
+          .map((line) => line.replace(/^> ?/, ""))
+          .join("\n")
+          .trim();
+        return { type, text };
+      },
+      toBlock: ({ type = "tip", text = "" }) => {
+        const body = String(text)
+          .trim()
+          .split("\n")
+          .map((line) => `> ${line}`)
+          .join("\n");
+        return body ? `> [!${type}]\n${body}` : `> [!${type}]`;
+      },
+      toPreview: ({ type = "tip", text = "" }) =>
+        `<div class="notice ${type}"><div class="notice-head"><p>${type}</p></div><div class="notice-body"><p>${text}</p></div></div>`,
+    });
+
+    // Componente: Link (pagina interna, articolo, URL esterno, nuova scheda)
+    CMS.registerEditorComponent({
+      id: "internal-link",
+      label: "Link",
+      icon: "link",
+      mode: "dialog",
+      trigger: "button",
+      summary: "{{text}}",
+      fields: [
+        { name: "text", label: "Testo del link", widget: "string" },
+        {
+          name: "page",
+          label: "Pagina interna",
+          widget: "relation",
+          collection: "pages",
+          value_field: "{{slug}}",
+          display_fields: ["title"],
+          search_fields: ["title"],
+          dropdown_threshold: 0,
+          required: false,
+          hint: "Compila solo uno dei campi. Ha priorità: progetto, poi post, poi pagina.",
+        },
+        {
+          name: "post",
+          label: "Post",
+          widget: "relation",
+          collection: "posts",
+          value_field: "{{slug}}",
+          display_fields: ["title"],
+          search_fields: ["title"],
+          dropdown_threshold: 0,
+          required: false,
+        },
+        {
+          name: "project",
+          label: "Progetto",
+          widget: "relation",
+          collection: "projects",
+          value_field: "{{slug}}",
+          display_fields: ["title"],
+          search_fields: ["title"],
+          dropdown_threshold: 0,
+          required: false,
+        },
+        {
+          name: "doc",
+          label: "Documento",
+          widget: "relation",
+          collection: "docs",
+          value_field: "{{slug}}",
+          display_fields: ["title"],
+          search_fields: ["title"],
+          dropdown_threshold: 0,
+          required: false,
+        },
+        {
+          name: "url",
+          label: "URL esterno (opzionale)",
+          widget: "string",
+          required: false,
+          hint: "Usato solo se non hai scelto pagina/post/progetto/documento.",
+        },
+        {
+          name: "new_tab",
+          label: "Apri in una nuova scheda",
+          widget: "boolean",
+          default: false,
+        },
+      ],
+      pattern: /<a href="(?<url>[^"]+)"[^>]*data-internal-link>(?<text>[^<]*)<\/a>/,
+      fromBlock: (match) => {
+        const url = match.groups?.url ?? "";
+        const text = match.groups?.text ?? "";
+        const new_tab = /target="_blank"/.test(match[0] ?? "");
+        if (url.startsWith("/projects/")) {
+          return { text, project: url.slice(10), page: "", post: "", doc: "", url: "", new_tab };
+        }
+        if (url.startsWith("/docs/")) {
+          return { text, doc: url.slice(6), page: "", post: "", project: "", url: "", new_tab };
+        }
+        if (url.startsWith("/posts/")) {
+          return { text, post: url.slice(7), page: "", project: "", doc: "", url: "", new_tab };
+        }
+        if (url.startsWith("/")) {
+          return { text, page: url.slice(1), post: "", project: "", doc: "", url: "", new_tab };
+        }
+        return { text, page: "", post: "", project: "", doc: "", url, new_tab };
+      },
+      toBlock: ({ text = "", page = "", post = "", project = "", doc = "", url = "", new_tab = false }) => {
+        const href = project
+          ? `/projects/${project}`
+          : doc
+            ? `/docs/${doc}`
+            : post
+              ? `/posts/${post}`
+              : page
+                ? `/${page}`
+                : url || "#";
+        const target = new_tab
+          ? ' target="_blank" rel="noopener noreferrer"'
+          : "";
+        return `<a href="${href}"${target} data-internal-link>${text || href}</a>`;
+      },
+      toPreview: ({ text = "", page = "", post = "", project = "", doc = "", url = "", new_tab = false }) => {
+        const href = project
+          ? `/projects/${project}`
+          : doc
+            ? `/docs/${doc}`
+            : post
+              ? `/posts/${post}`
+              : page
+                ? `/${page}`
+                : url || "#";
+        const target = new_tab ? ' target="_blank" rel="noopener noreferrer"' : "";
+        return `<a href="${href}"${target}>${text || href}</a>`;
+      },
+    });
+
+    // Componente: Pulsante
+    CMS.registerEditorComponent({
+      id: "button",
+      label: "Pulsante",
+      icon: "smart_button",
+      trigger: "button",
+      fields: [
+        { name: "label", label: "Etichetta", widget: "string" },
+        { name: "link", label: "Link", widget: "string", hint: "Es. /contatti oppure https://..." },
+        {
+          name: "style",
+          label: "Stile",
+          widget: "select",
+          options: [
+            { label: "Primario", value: "btn-primary" },
+            { label: "Contorno", value: "btn-outline-primary" },
+          ],
+          default: "btn-primary",
+        },
+        { name: "new_tab", label: "Apri in una nuova scheda", widget: "boolean", default: false },
+      ],
+      pattern: /<a href="(?<link>[^"]+)" class="btn (?<style>btn-primary|btn-outline-primary)"(?<target>[^>]*)>(?<label>[^<]*)<\/a>/,
+      fromBlock: (match) => ({
+        label: match.groups?.label ?? "",
+        link: match.groups?.link ?? "",
+        style: match.groups?.style ?? "btn-primary",
+        new_tab: /target="_blank"/.test(match[0] ?? ""),
+      }),
+      toBlock: ({ label = "", link = "#", style = "btn-primary", new_tab = false }) => {
+        const target = new_tab ? ' target="_blank" rel="noopener noreferrer"' : "";
+        return `<a href="${link}" class="btn ${style}"${target}>${label}</a>`;
+      },
+      toPreview: ({ label = "", link = "#", style = "btn-primary", new_tab = false }) => {
+        const target = new_tab ? ' target="_blank" rel="noopener noreferrer"' : "";
+        return `<a href="${link}" class="btn ${style}"${target}>${label}</a>`;
+      },
+    });
+
+    // Componente: Accordion (direttiva :::accordion)
+    CMS.registerEditorComponent({
+      id: "accordion",
+      label: "Accordion",
+      icon: "expand_more",
+      trigger: "button",
+      fields: [
+        { name: "title", label: "Titolo", widget: "string" },
+        { name: "content", label: "Contenuto", widget: "richtext" },
+      ],
+      pattern: /^::::accordion\{title="(?<title>[^"]*)"\}\n(?<content>[\s\S]*?)\n::::$/m,
+      fromBlock: (match) => ({
+        title: match.groups?.title ?? "",
+        content: match.groups?.content ?? "",
+      }),
+      toBlock: ({ title = "", content = "" }) =>
+        `::::accordion{title="${title}"}\n${content}\n::::`,
+      toPreview: ({ title = "", content = "" }) =>
+        `<details class="accordion" open><summary class="accordion-header">${title}</summary><div class="accordion-content">${content}</div></details>`,
+    });
+
+    // Componente: Tab (direttiva ::::tabs con :::tab)
+    CMS.registerEditorComponent({
+      id: "tabs",
+      label: "Tab",
+      icon: "tab",
+      trigger: "button",
+      fields: [
+        {
+          name: "tabs",
+          label: "Schede",
+          widget: "list",
+          label_singular: "Scheda",
+          summary: "{{fields.title}}",
+          min: 1,
+          fields: [
+            { name: "title", label: "Titolo scheda", widget: "string" },
+            { name: "content", label: "Contenuto", widget: "richtext" },
+          ],
+        },
+      ],
+      pattern: /^::::tabs\n(?<body>[\s\S]*?)\n::::$/m,
+      fromBlock: (match) => {
+        const body = match.groups?.body ?? "";
+        const tabs = [
+          ...body.matchAll(/:::tab\{title="([^"]*)"\}\n([\s\S]*?)\n:::/g),
+        ].map((m) => ({ title: m[1], content: m[2] }));
+        return { tabs };
+      },
+      toBlock: ({ tabs = [] }) => {
+        const inner = tabs
+          .map(
+            (tab) =>
+              `:::tab{title="${tab.title ?? ""}"}\n${tab.content ?? ""}\n:::`,
+          )
+          .join("\n");
+        return `::::tabs\n${inner}\n::::`;
+      },
+      toPreview: ({ tabs = [] }) => {
+        const nav = tabs
+          .map(
+            (tab, index) =>
+              `<li class="tab-nav-item ${index === 0 ? "active" : ""}">${tab.title ?? ""}</li>`,
+          )
+          .join("");
+        const panels = tabs
+          .map(
+            (tab, index) =>
+              `<div class="tab-content ${index === 0 ? "" : "hidden"}">${tab.content ?? ""}</div>`,
+          )
+          .join("");
+        return `<div class="tab"><ul class="tab-nav">${nav}</ul>${panels}</div>`;
+      },
+    });
+
+    // Componente: Mappa Google
+    CMS.registerEditorComponent({
+      id: "map",
+      label: "Mappa Google",
+      icon: "map",
+      trigger: "button",
+      fields: [
+        {
+          name: "src",
+          label: "URL embed Google Maps",
+          widget: "string",
+          hint: "Google Maps → Condividi → Incorpora mappa → copia il valore src dell'iframe.",
+        },
+        { name: "height", label: "Altezza (px)", widget: "number", value_type: "int", default: 400 },
+      ],
+      pattern: /<div class="map-embed">\s*<iframe src="(?<src>[^"]+)"[^>]*height="(?<height>\d+)"[^>]*><\/iframe>\s*<\/div>/,
+      fromBlock: (match) => ({
+        src: match.groups?.src ?? "",
+        height: Number(match.groups?.height ?? 400),
+      }),
+      toBlock: ({ src = "", height = 400 }) =>
+        `<div class="map-embed"><iframe src="${src}" width="100%" height="${height}" style="border:0;" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>`,
+      toPreview: ({ src = "", height = 400 }) =>
+        `<div class="map-embed"><iframe src="${src}" width="100%" height="${height}" style="border:0;" allowfullscreen loading="lazy"></iframe></div>`,
+    });
+
+    // Componente: YouTube
+    CMS.registerEditorComponent({
+      id: "youtube",
+      label: "YouTube",
+      icon: "smart_display",
+      trigger: "button",
+      fields: [
+        { name: "id", label: "ID video", widget: "string", hint: "Es. C0DPdy98e4c" },
+        { name: "title", label: "Titolo", widget: "string", required: false },
+      ],
+      pattern: /<iframe[^>]*src="https:\/\/www\.youtube-nocookie\.com\/embed\/(?<id>[^"?]+)"[^>]*title="(?<title>[^"]*)"[^>]*><\/iframe>/,
+      fromBlock: (match) => ({
+        id: match.groups?.id ?? "",
+        title: match.groups?.title ?? "",
+      }),
+      toBlock: ({ id = "", title = "" }) =>
+        `<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/${id}" title="${title}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>`,
+      toPreview: ({ id = "", title = "" }) =>
+        `<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/${id}" title="${title}" frameborder="0" allowfullscreen></iframe>`,
+    });
+
+    // Field type: tags/categorie con selezione + creazione inline.
+    const { useState, useEffect } = CMS.React;
+
+    const TagsControl = ({ field, forID, classNameWrapper, value, onChange }) => {
+      const taxonomyKey =
+        field?.get("taxonomy_key") || field?.get("name") || "tags";
+      const rawOptions = field?.get("options");
+      const configOptions = Array.isArray(rawOptions)
+        ? rawOptions
+        : rawOptions?.toArray?.() ?? [];
+      const [options, setOptions] = useState(configOptions);
+      const [input, setInput] = useState("");
+      const [showList, setShowList] = useState(false);
+
+      useEffect(() => {
+        fetch("/data/taxonomy.json", { cache: "no-store" })
+          .then((response) => response.json())
+          .then((data) => {
+            const tax = Array.isArray(data?.[taxonomyKey])
+              ? data[taxonomyKey]
+              : [];
+            setOptions([...new Set([...configOptions, ...tax])]);
+          })
+          .catch(() => {});
+      }, [taxonomyKey]);
+
+      const values = Array.isArray(value) ? value : value ? [value] : [];
+
+      const add = (raw) => {
+        const next = String(raw).trim();
+        if (!next || values.includes(next)) return;
+        onChange([...values, next]);
+        setInput("");
+        setShowList(false);
+      };
+
+      const remove = (item) => onChange(values.filter((x) => x !== item));
+
+      const query = input.trim().toLowerCase();
+      const suggestions = options.filter(
+        (option) =>
+          !values.includes(option) &&
+          (!query || option.toLowerCase().includes(query)),
+      );
+
+      return html`
+        <div style="position: relative;">
+          <div
+            style="display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px;"
+          >
+            ${values.map(
+              (item) => html`
+                <span
+                  key=${item}
+                  style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; background: var(--sui-secondary-background-color, #eee); font-size: 12px;"
+                >
+                  ${item}
+                  <button
+                    type="button"
+                    aria-label=${`Rimuovi ${item}`}
+                    onClick=${() => remove(item)}
+                    style="border: none; background: none; cursor: pointer; padding: 0; line-height: 1;"
+                  >
+                    ×
+                  </button>
+                </span>
+              `,
+            )}
+          </div>
+          <input
+            id=${forID}
+            class=${classNameWrapper}
+            type="text"
+            value=${input}
+            placeholder="Aggiungi o seleziona..."
+            autocomplete="off"
+            onInput=${(event) => {
+              setInput(event.target.value);
+              setShowList(true);
+            }}
+            onFocus=${() => setShowList(true)}
+            onBlur=${() => setTimeout(() => setShowList(false), 150)}
+            onKeyDown=${(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                add(input);
+              }
+              if (event.key === "Escape") setShowList(false);
+            }}
+          />
+          ${showList && suggestions.length > 0
+            ? html`
+                <ul
+                  style="position: absolute; z-index: 10; left: 0; right: 0; margin: 2px 0 0; padding: 0; list-style: none; max-height: 180px; overflow: auto; border: 1px solid var(--sui-border-color, #ccc); border-radius: 4px; background: var(--sui-background-color, #fff);"
+                >
+                  ${suggestions.map(
+                    (option) => html`
+                      <li
+                        key=${option}
+                        style="padding: 6px 10px; cursor: pointer;"
+                        onMouseDown=${(event) => {
+                          event.preventDefault();
+                          add(option);
+                        }}
+                      >
+                        ${option}
+                      </li>
+                    `,
+                  )}
+                </ul>
+              `
+            : ""}
+        </div>
+      `;
+    };
+
+    const TagsPreview = ({ value }) => {
+      const values = Array.isArray(value) ? value : value ? [value] : [];
+      return html`
+        <ul style="margin: 0; padding-left: 20px;">
+          ${values.map((item) => html`<li key=${item}>${item}</li>`)}
+        </ul>
+      `;
+    };
+
+    CMS.registerFieldType("tags", TagsControl, TagsPreview, {
+      properties: {
+        taxonomy_key: { type: "string" },
+        options: { type: "array" },
+      },
+    });
+
+    // Componente: blocco codice con linguaggio esplicito (HTML/CSS/JS/...).
+    CMS.registerEditorComponent({
+      id: "code-snippet",
+      label: "Codice (HTML/CSS/JS)",
+      icon: "code_blocks",
+      trigger: "menuitem",
+      fields: [
+        {
+          name: "snippet",
+          label: "Codice",
+          widget: "code",
+          default_language: "html",
+          allow_language_selection: true,
+        },
+      ],
+      pattern: /^```(?<lang>[a-zA-Z0-9_-]+)\n(?<code>[\s\S]*?)\n```$/m,
+      fromBlock: (match) => ({
+        snippet: {
+          code: match.groups?.code ?? "",
+          lang: match.groups?.lang ?? "html",
+        },
+      }),
+      toBlock: ({ snippet = { code: "", lang: "html" } }) =>
+        `\`\`\`${snippet.lang || "html"}\n${snippet.code || ""}\n\`\`\``,
+      toPreview: ({ snippet = { code: "", lang: "html" } }) =>
+        `\`\`\`${snippet.lang || "html"}\n${snippet.code || ""}\n\`\`\``,
+    });
+
+    CMS.init();
+
+    // Pulsante "Focus": mette l'editor a schermo intero (toolbar inclusa).
+    const focusObserver = new MutationObserver(() => {
+      if (document.querySelector("[data-cms-focus]")) return;
+      const editor = document.querySelector(".sui.text-editor");
+      if (!editor) return;
+      const toolbar =
+        document.querySelector(".content-editor .sui.toolbar.primary .inner") ||
+        document.querySelector(".sui.text-editor .sui.toolbar .inner");
+      const button = document.createElement("button");
+      button.type = "button";
+      button.dataset.cmsFocus = "true";
+      button.className = "cms-focus-button";
+      button.title = "Focus / Schermo intero";
+      button.textContent = "Focus";
+      button.addEventListener("click", async () => {
+        let target = document.querySelector(
+          ".content-editor .sui.text-editor",
+        );
+        if (!target || !target.querySelector(".sui.toolbar")) {
+          target =
+            document.querySelector(".content-editor") ||
+            document.querySelector(".sui.text-editor");
+        }
+        if (!target) return;
+        if (document.fullscreenElement) {
+          await document.exitFullscreen();
+        } else {
+          await target.requestFullscreen();
+        }
+      });
+      if (toolbar) {
+        toolbar.appendChild(button);
+      } else {
+        button.classList.add("cms-focus-floating");
+        document.body.appendChild(button);
+      }
+    });
+    focusObserver.observe(document.body, { childList: true, subtree: true });
+
+    // Enable browser spellcheck in the CMS text areas (Lexical editor,
+    // textareas and single-line text inputs).
+    const enableSpellcheck = () => {
+      document
+        .querySelectorAll('[contenteditable="true"], textarea, input[type="text"]')
+        .forEach((element) => {
+          if (element.getAttribute("spellcheck") !== "true") {
+            element.setAttribute("spellcheck", "true");
+          }
+        });
+    };
+    const spellcheckObserver = new MutationObserver(enableSpellcheck);
+    spellcheckObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["spellcheck", "contenteditable"],
+    });
+    enableSpellcheck();
+  </script>
+</body>
+</html>
