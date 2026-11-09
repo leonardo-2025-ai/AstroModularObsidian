@@ -1,5 +1,5 @@
 ---
-title: "Ora Incontra Astro Modular"
+title: Ora Incontra Astro Modular
 date: 2026-10-26
 description: Astro Modular in under a minute. Switch on the features you need, pick from 17 color themes, and publish your Obsidian vault, free and open source.
 tags:
@@ -15,6 +15,7 @@ targetKeyword: astro modular
 draft: false
 aliases:
   - meet-astro-modular
+  - incontra-astro-modular
 ---
 
 
