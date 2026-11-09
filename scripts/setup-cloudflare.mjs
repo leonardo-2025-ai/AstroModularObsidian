@@ -9,11 +9,15 @@
  * Cosa fa:
  *   1. pnpm-workspace.yaml -> aggiunge `packages: ["."]`
  *   2. package.json        -> aggiunge la dipendenza diretta `cookie`
- *   3. package.json        -> aggiunge `packageManager: "pnpm@<versione>"`
- *   4. package.json        -> aggiunge lo script `setup:cloudflare`
- *   5. src/config.ts       -> imposta deployment.platform = "cloudflare-workers"
+ *   3. package.json        -> aggiunge lo script `setup:cloudflare`
+ *   4. src/config.ts       -> imposta deployment.platform = "cloudflare-workers"
+ *   5. wrangler.toml       -> allinea il nome al Worker (con --worker-name)
  *   6. .npmrc              -> rimuove il vecchio `frozen-lockfile=false`
  *   7. pnpm install        -> rigenera il lockfile (salvo --no-install)
+ *
+ * Nota: NON impostiamo `packageManager`, così Cloudflare usa la sua versione
+ * di pnpm predefinita (9.10.0), che è quella con cui i build funzionano.
+ * Se vuoi comunque pinnarla, aggiungi `"packageManager": "pnpm@..."` a mano.
  *
  * Uso:
  *   node scripts/setup-cloudflare.mjs
@@ -31,7 +35,6 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 
-const PNPM_VERSION = '12.18.0';
 const COOKIE_RANGE = '^2.0.1';
 const PLATFORM = 'cloudflare-workers';
 const SETUP_SCRIPT = 'node scripts/setup-cloudflare.mjs';
@@ -102,19 +105,6 @@ function ensureWorkspace() {
 }
 
 /* 2-4. package.json ----------------------------------------------------- */
-function reorderPackageManager(pkg) {
-  if (!('packageManager' in pkg)) return pkg;
-  const value = pkg.packageManager;
-  const out = {};
-  for (const [key, val] of Object.entries(pkg)) {
-    if (key === 'packageManager') continue;
-    out[key] = val;
-    if (key === 'version') out.packageManager = value;
-  }
-  if (!('packageManager' in out)) out.packageManager = value;
-  return out;
-}
-
 function ensurePackageJson() {
   step('package.json');
   const file = join(ROOT, 'package.json');
@@ -133,17 +123,7 @@ function ensurePackageJson() {
     ok(`Dipendenza "cookie" già presente (${pkg.dependencies.cookie}).`);
   }
 
-  // 3. versione di pnpm pinnata nel codice
-  const wantedPnpm = `pnpm@${PNPM_VERSION}`;
-  if (pkg.packageManager === wantedPnpm) {
-    ok(`packageManager già impostato (${wantedPnpm}).`);
-  } else {
-    pkg.packageManager = wantedPnpm;
-    changed = true;
-    change(`Impostato packageManager: "${wantedPnpm}".`);
-  }
-
-  // 4. comando di setup
+  // 3. comando di setup
   if (!pkg.scripts) pkg.scripts = {};
   if (pkg.scripts['setup:cloudflare'] !== SETUP_SCRIPT) {
     pkg.scripts['setup:cloudflare'] = SETUP_SCRIPT;
@@ -163,7 +143,7 @@ function ensurePackageJson() {
   }
 
   if (changed) {
-    const out = JSON.stringify(reorderPackageManager(pkg), null, 2).replace(/\n/g, eol) + eol;
+    const out = JSON.stringify(pkg, null, 2).replace(/\n/g, eol) + eol;
     writeFileSync(file, out, 'utf-8');
   }
 }
