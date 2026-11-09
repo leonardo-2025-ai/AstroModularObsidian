@@ -39,6 +39,11 @@ const SETUP_SCRIPT = 'node scripts/setup-cloudflare.mjs';
 const args = new Set(process.argv.slice(2));
 const SKIP_INSTALL = args.has('--no-install');
 
+// Nome del Worker su Cloudflare (deve combaciare con il nome nel dashboard).
+// Esempio: node scripts/setup-cloudflare.mjs --worker-name astromodularobsidian
+const workerNameIndex = process.argv.indexOf('--worker-name');
+const WORKER_NAME = workerNameIndex !== -1 ? process.argv[workerNameIndex + 1] : null;
+
 const summary = [];
 
 function step(msg) {
@@ -148,10 +153,49 @@ function ensurePackageJson() {
     ok('Script "setup:cloudflare" già presente.');
   }
 
+  // 5. nome del Worker (solo se passato con --worker-name)
+  if (WORKER_NAME && pkg.name !== WORKER_NAME) {
+    pkg.name = WORKER_NAME;
+    changed = true;
+    change(`Impostato name: "${WORKER_NAME}" (deve combaciare col Worker Cloudflare).`);
+  } else if (WORKER_NAME) {
+    ok(`name già allineato al Worker ("${WORKER_NAME}").`);
+  }
+
   if (changed) {
     const out = JSON.stringify(reorderPackageManager(pkg), null, 2).replace(/\n/g, eol) + eol;
     writeFileSync(file, out, 'utf-8');
   }
+}
+
+/* 5b. wrangler.toml ------------------------------------------------------ */
+function ensureWranglerName() {
+  step('wrangler.toml');
+  const file = join(ROOT, 'wrangler.toml');
+
+  if (!WORKER_NAME) {
+    ok('Nome Worker non specificato (usa --worker-name <nome> se serve).');
+    return;
+  }
+
+  if (!existsSync(file)) {
+    warn('wrangler.toml non trovato: verrà creato al primo build.');
+    return;
+  }
+
+  const raw = readFileSync(file, 'utf-8');
+  if (new RegExp(`^name\\s*=\\s*"${WORKER_NAME}"`, 'm').test(raw)) {
+    ok(`name = "${WORKER_NAME}" già presente.`);
+    return;
+  }
+
+  if (!/^name\s*=\s*"[^"]*"/m.test(raw)) {
+    warn('Riga "name = ..." non trovata in wrangler.toml: modifica a mano.');
+    return;
+  }
+
+  writeFileSync(file, raw.replace(/^name\s*=\s*"[^"]*"/m, `name = "${WORKER_NAME}"`), 'utf-8');
+  change(`wrangler.toml name impostato a "${WORKER_NAME}".`);
 }
 
 /* 5. src/config.ts ------------------------------------------------------ */
@@ -228,6 +272,7 @@ console.log(`Cartella progetto: ${ROOT}`);
 ensureWorkspace();
 ensurePackageJson();
 ensurePlatform();
+ensureWranglerName();
 removeLegacyNpmrc();
 runInstall();
 
