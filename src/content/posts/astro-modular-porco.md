@@ -1,5 +1,5 @@
 ---
-title: Astro Modular
+title: Astro Modular PORCO
 date: 2026-10-26
 description: Astro Modular in under a minute. Switch on the features you need, pick from 17 color themes, and publish your Obsidian vault, free and open source.
 tags:
@@ -17,7 +17,9 @@ aliases:
   - meet-astro-modular
   - incontra-astro-modular
   - ora-incontra-astro-modular
+  - astro-modular
 ---
+
 
 
 
