@@ -186,6 +186,12 @@
   force = true
 
 [[redirects]]
+  from = "/posts/meet-astro-modular"
+  to = "/posts/incontra-astro-modular"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/posts/mermaid-test"
   to = "/posts/obsidian-embeds-demo"
   status = 301
