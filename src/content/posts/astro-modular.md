@@ -6,7 +6,7 @@ tags:
   - astro
   - obsidian
   - meta
-image: "[[attachments/blue-mountains.jpg]]"
+image: "[[attachments/galaxy.png]]"
 imageAlt: Blue mountain ridges fading into the haze.
 imageOG: true
 hideCoverImage: true
