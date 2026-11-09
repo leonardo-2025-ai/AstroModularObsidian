@@ -7,7 +7,7 @@
  * Builds) senza dover rifare a mano le stesse modifiche ogni volta.
  *
  * Cosa fa:
- *   1. pnpm-workspace.yaml -> aggiunge `packages: ["."]`
+ *   1. pnpm-workspace.yaml -> aggiunge `packages: ["."]` e `minimumReleaseAge: 0`
  *   2. package.json        -> aggiunge la dipendenza diretta `cookie`
  *   3. package.json        -> aggiunge lo script `setup:cloudflare`
  *   4. src/config.ts       -> imposta deployment.platform = "cloudflare-workers"
@@ -82,6 +82,8 @@ function ensureWorkspace() {
       'packages:',
       '  - "."',
       '',
+      'minimumReleaseAge: 0',
+      '',
       'allowBuilds:',
       '  esbuild: true',
       '  sharp: true',
@@ -89,19 +91,34 @@ function ensureWorkspace() {
       '',
     ].join('\n');
     writeFileSync(file, content, 'utf-8');
-    change('Creato con packages + allowBuilds (esbuild, sharp, workerd).');
+    change('Creato con packages + minimumReleaseAge + allowBuilds.');
     return;
   }
 
-  const raw = readFileSync(file, 'utf-8');
-  if (/^packages\s*:/m.test(raw)) {
-    ok('Campo "packages" già presente.');
-    return;
-  }
-
+  let raw = readFileSync(file, 'utf-8');
   const eol = detectEol(raw);
-  writeFileSync(file, `packages:${eol}  - "."${eol}${eol}${raw}`, 'utf-8');
-  change('Aggiunto packages: ["."].');
+  let changed = false;
+
+  // `packages` è richiesto da pnpm quando esiste pnpm-workspace.yaml.
+  if (!/^packages\s*:/m.test(raw)) {
+    raw = `packages:${eol}  - "."${eol}${eol}${raw}`;
+    changed = true;
+    change('Aggiunto packages: ["."].');
+  } else {
+    ok('Campo "packages" già presente.');
+  }
+
+  // pnpm 11+ blocca i pacchetti pubblicati da meno di 24h; il lockfile del
+  // sito può contenerli perché viene rigenerato con pnpm 9.10.0 (Cloudflare).
+  if (!/^minimumReleaseAge\s*:/m.test(raw)) {
+    raw = `minimumReleaseAge: 0${eol}${eol}${raw}`;
+    changed = true;
+    change('Aggiunto minimumReleaseAge: 0 (evita ERR_PNPM_MINIMUM_RELEASE_AGE_VIOLATION in locale).');
+  } else {
+    ok('minimumReleaseAge già impostato.');
+  }
+
+  if (changed) writeFileSync(file, raw, 'utf-8');
 }
 
 /* 2-4. package.json ----------------------------------------------------- */

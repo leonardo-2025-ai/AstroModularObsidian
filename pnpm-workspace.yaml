@@ -1,6 +1,13 @@
 packages:
   - "."
 
+# pnpm 11+ rifiuta i pacchetti pubblicati da meno di 24h (default 1440 minuti).
+# Il lockfile di questo sito viene rigenerato con pnpm 9.10.0 (versione usata
+# da Cloudflare), che non applica questa policy e può includere versioni
+# recentissime. Con 0 il PC locale (pnpm 12) accetta il lockfile.
+# pnpm 9 su Cloudflare ignora questa chiave.
+minimumReleaseAge: 0
+
 allowBuilds:
   esbuild: true
   sharp: true
