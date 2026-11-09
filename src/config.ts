@@ -186,7 +186,7 @@ export const siteConfig: SiteConfig = {
   // [CONFIG:SITE_URL]
   site: "https://astromodularobsidian.leonardo-2025-ai.workers.dev/",
   // [CONFIG:SITE_TITLE]
-  title: "Astro Modular Obsidian",
+  title: "Astro e Obsidian",
   // [CONFIG:HOMEPAGE_TITLE]
   homepageTitle: "",
   // [CONFIG:SITE_DESCRIPTION]

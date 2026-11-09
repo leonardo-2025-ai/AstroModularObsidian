@@ -1,7 +1,7 @@
 {
   "defaultTemplate": "---\ntitle: \"{{title}}\"\ndate: {{date}}\ndescription: \"\"\ntags: []\nimage: \"\"\nimageAlt: \"\"\nimageOG: false\nhideCoverImage: false\nhideTOC: false\ntargetKeyword: \"\"\ndraft: false\n---\n",
   "autoInsertProperties": true,
-  "dateFormat": "YYYY-MM-DD",
+  "dateFormat": "DD-MM-YYYY",
   "enableCopyHeadingLink": true,
   "copyHeadingLinkFormat": "obsidian",
   "addTrailingSlashToLinks": true,
