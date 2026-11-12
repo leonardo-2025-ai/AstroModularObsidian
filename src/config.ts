@@ -190,7 +190,7 @@ export const siteConfig: SiteConfig = {
   // [CONFIG:HOMEPAGE_TITLE]
   homepageTitle: "",
   // [CONFIG:SITE_DESCRIPTION]
-  description: "A flexible blog theme designed for Obsidian users.",
+  description: "Un blog su Astro e Obsidian, con i contenuti gestiti dal vault Obsidian e pubblicati anche da remoto con Sveltia CMS.",
   // [CONFIG:SITE_AUTHOR]
   author: "Leonardo",
   // [CONFIG:SITE_LANGUAGE]
@@ -237,7 +237,7 @@ export const siteConfig: SiteConfig = {
     // [CONFIG:FOOTER_ENABLED]
     enabled: true,
     // [CONFIG:FOOTER_CONTENT]
-    content: `© 2026 {author}. Built with the <a href="https://github.com/davidvkimball/astro-modular" target="_blank">Astro Modular</a> theme.`,
+    content: `© 2026 {author}. Realizzato con il tema <a href="https://github.com/davidvkimball/astro-modular" target="_blank">Astro Modular</a>.`,
     // [CONFIG:FOOTER_SHOW_SOCIAL_ICONS]
     showSocialIconsInFooter: true,
   },
@@ -259,16 +259,16 @@ export const siteConfig: SiteConfig = {
     // [CONFIG:COMMAND_PALETTE_SHORTCUT]
     shortcut: "ctrl+K",
     // [CONFIG:COMMAND_PALETTE_PLACEHOLDER]
-    placeholder: "Search posts",
+    placeholder: "Cerca nel sito",
     search: {
       // [CONFIG:COMMAND_PALETTE_SEARCH_POSTS]
       posts: true,
       // [CONFIG:COMMAND_PALETTE_SEARCH_PAGES]
-      pages: false,
+      pages: true,
       // [CONFIG:COMMAND_PALETTE_SEARCH_PROJECTS]
-      projects: false,
+      projects: true,
       // [CONFIG:COMMAND_PALETTE_SEARCH_DOCS]
-      docs: false,
+      docs: true,
     },
     sections: {
       // [CONFIG:COMMAND_PALETTE_SECTIONS_QUICK_ACTIONS]
@@ -318,25 +318,20 @@ export const siteConfig: SiteConfig = {
     showMobileMenu: true,
     // [CONFIG:NAVIGATION_PAGES]
     pages: [
-      { title: "Posts", url: "/posts/" },
-      { title: "Projects", url: "/projects/" },
-      { title: "Docs", url: "/docs/" },
-      { title: "About", url: "/about/",
+      { title: "Articoli", url: "/posts/" },
+      { title: "Progetti", url: "/projects/" },
+      { title: "Documentazione", url: "/docs/" },
+      { title: "Chi sono", url: "/about/",
         children: [
-          { title: "Privacy Policy", url: "/privacy-policy/" }
+          { title: "Privacy", url: "/privacy-policy/" }
         ] },
-      { title: "GitHub", url: "https://github.com/davidvkimball/astro-modular" }
+      { title: "GitHub", url: "https://github.com/leonardo-2025-ai/AstroModularObsidian" }
     ],
     // [CONFIG:NAVIGATION_SOCIAL]
     social: [
       {
-        title: "X",
-        url: "https://x.com/davidvkimball",
-        icon: "x-twitter",
-      },
-      {
         title: "GitHub",
-        url: "https://github.com/davidvkimball",
+        url: "https://github.com/leonardo-2025-ai",
         icon: "github",
       },
     ],

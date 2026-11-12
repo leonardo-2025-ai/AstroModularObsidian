@@ -228,10 +228,11 @@
               : page
                 ? `/${page}`
                 : url || "#";
-        const target = new_tab
-          ? ' target="_blank" rel="noopener noreferrer"'
-          : "";
-        return `<a href="${href}"${target} data-internal-link>${text || href}</a>`;
+        const label = text || href;
+        if (new_tab) {
+          return `<a href="${href}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+        }
+        return `[${label}](${href})`;
       },
       toPreview: ({ text = "", page = "", post = "", project = "", doc = "", url = "", new_tab = false }) => {
         const href = project
@@ -248,45 +249,7 @@
       },
     });
 
-    // Componente: Pulsante
-    CMS.registerEditorComponent({
-      id: "button",
-      label: "Pulsante",
-      icon: "smart_button",
-      trigger: "button",
-      fields: [
-        { name: "label", label: "Etichetta", widget: "string" },
-        { name: "link", label: "Link", widget: "string", hint: "Es. /contatti oppure https://..." },
-        {
-          name: "style",
-          label: "Stile",
-          widget: "select",
-          options: [
-            { label: "Primario", value: "btn-primary" },
-            { label: "Contorno", value: "btn-outline-primary" },
-          ],
-          default: "btn-primary",
-        },
-        { name: "new_tab", label: "Apri in una nuova scheda", widget: "boolean", default: false },
-      ],
-      pattern: /<a href="(?<link>[^"]+)" class="btn (?<style>btn-primary|btn-outline-primary)"(?<target>[^>]*)>(?<label>[^<]*)<\/a>/,
-      fromBlock: (match) => ({
-        label: match.groups?.label ?? "",
-        link: match.groups?.link ?? "",
-        style: match.groups?.style ?? "btn-primary",
-        new_tab: /target="_blank"/.test(match[0] ?? ""),
-      }),
-      toBlock: ({ label = "", link = "#", style = "btn-primary", new_tab = false }) => {
-        const target = new_tab ? ' target="_blank" rel="noopener noreferrer"' : "";
-        return `<a href="${link}" class="btn ${style}"${target}>${label}</a>`;
-      },
-      toPreview: ({ label = "", link = "#", style = "btn-primary", new_tab = false }) => {
-        const target = new_tab ? ' target="_blank" rel="noopener noreferrer"' : "";
-        return `<a href="${link}" class="btn ${style}"${target}>${label}</a>`;
-      },
-    });
-
-    // Componente: Accordion (direttiva :::accordion)
+    // Componente: Accordion (HTML <details>, compatibile con Obsidian e Astro)
     CMS.registerEditorComponent({
       id: "accordion",
       label: "Accordion",
@@ -296,69 +259,15 @@
         { name: "title", label: "Titolo", widget: "string" },
         { name: "content", label: "Contenuto", widget: "richtext" },
       ],
-      pattern: /^::::accordion\{title="(?<title>[^"]*)"\}\n(?<content>[\s\S]*?)\n::::$/m,
+      pattern: /^<details>\s*<summary>(?<title>[\s\S]*?)<\/summary>\s*(?<content>[\s\S]*?)\s*<\/details>$/m,
       fromBlock: (match) => ({
         title: match.groups?.title ?? "",
         content: match.groups?.content ?? "",
       }),
       toBlock: ({ title = "", content = "" }) =>
-        `::::accordion{title="${title}"}\n${content}\n::::`,
+        `<details>\n<summary>${title}</summary>\n\n${content}\n\n</details>`,
       toPreview: ({ title = "", content = "" }) =>
         `<details class="accordion" open><summary class="accordion-header">${title}</summary><div class="accordion-content">${content}</div></details>`,
-    });
-
-    // Componente: Tab (direttiva ::::tabs con :::tab)
-    CMS.registerEditorComponent({
-      id: "tabs",
-      label: "Tab",
-      icon: "tab",
-      trigger: "button",
-      fields: [
-        {
-          name: "tabs",
-          label: "Schede",
-          widget: "list",
-          label_singular: "Scheda",
-          summary: "{{fields.title}}",
-          min: 1,
-          fields: [
-            { name: "title", label: "Titolo scheda", widget: "string" },
-            { name: "content", label: "Contenuto", widget: "richtext" },
-          ],
-        },
-      ],
-      pattern: /^::::tabs\n(?<body>[\s\S]*?)\n::::$/m,
-      fromBlock: (match) => {
-        const body = match.groups?.body ?? "";
-        const tabs = [
-          ...body.matchAll(/:::tab\{title="([^"]*)"\}\n([\s\S]*?)\n:::/g),
-        ].map((m) => ({ title: m[1], content: m[2] }));
-        return { tabs };
-      },
-      toBlock: ({ tabs = [] }) => {
-        const inner = tabs
-          .map(
-            (tab) =>
-              `:::tab{title="${tab.title ?? ""}"}\n${tab.content ?? ""}\n:::`,
-          )
-          .join("\n");
-        return `::::tabs\n${inner}\n::::`;
-      },
-      toPreview: ({ tabs = [] }) => {
-        const nav = tabs
-          .map(
-            (tab, index) =>
-              `<li class="tab-nav-item ${index === 0 ? "active" : ""}">${tab.title ?? ""}</li>`,
-          )
-          .join("");
-        const panels = tabs
-          .map(
-            (tab, index) =>
-              `<div class="tab-content ${index === 0 ? "" : "hidden"}">${tab.content ?? ""}</div>`,
-          )
-          .join("");
-        return `<div class="tab"><ul class="tab-nav">${nav}</ul>${panels}</div>`;
-      },
     });
 
     // Componente: Mappa Google
@@ -397,15 +306,15 @@
         { name: "id", label: "ID video", widget: "string", hint: "Es. C0DPdy98e4c" },
         { name: "title", label: "Titolo", widget: "string", required: false },
       ],
-      pattern: /<iframe[^>]*src="https:\/\/www\.youtube-nocookie\.com\/embed\/(?<id>[^"?]+)"[^>]*title="(?<title>[^"]*)"[^>]*><\/iframe>/,
+      pattern: /^!\[(?<title>[^\]]*)\]\(https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)(?<id>[^)&?]+)[^)]*\)$/m,
       fromBlock: (match) => ({
         id: match.groups?.id ?? "",
         title: match.groups?.title ?? "",
       }),
       toBlock: ({ id = "", title = "" }) =>
-        `<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/${id}" title="${title}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>`,
+        `![${title}](https://www.youtube.com/watch?v=${id})`,
       toPreview: ({ id = "", title = "" }) =>
-        `<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/${id}" title="${title}" frameborder="0" allowfullscreen></iframe>`,
+        `<iframe width="560" height="315" src="https://www.youtube.com/embed/${id}?rel=0&modestbranding=1" title="${title}" frameborder="0" allowfullscreen loading="lazy"></iframe>`,
     });
 
     // Field type: tags/categorie con selezione + creazione inline.
@@ -423,12 +332,25 @@
       const [showList, setShowList] = useState(false);
 
       useEffect(() => {
-        fetch("/data/taxonomy.json", { cache: "no-store" })
-          .then((response) => response.json())
-          .then((data) => {
-            const tax = Array.isArray(data?.[taxonomyKey])
-              ? data[taxonomyKey]
-              : [];
+        const load = async (url) => {
+          try {
+            const response = await fetch(url, { cache: "no-store" });
+            return response.ok ? await response.json() : [];
+          } catch {
+            return [];
+          }
+        };
+
+        Promise.all([load("/api/posts.json"), load("/api/projects.json")])
+          .then(([posts, projects]) => {
+            const tags = (Array.isArray(posts) ? posts : []).flatMap((post) =>
+              Array.isArray(post?.tags) ? post.tags : [],
+            );
+            const categories = (Array.isArray(projects) ? projects : []).flatMap(
+              (project) =>
+                Array.isArray(project?.categories) ? project.categories : [],
+            );
+            const tax = taxonomyKey === "categories" ? categories : tags;
             setOptions([...new Set([...configOptions, ...tax])]);
           })
           .catch(() => {});
@@ -538,6 +460,33 @@
         taxonomy_key: { type: "string" },
         options: { type: "array" },
       },
+    });
+
+    // Componente: immagine con percorso relativo (anteprima anche in Obsidian).
+    const toRelativeMedia = (value) => {
+      const raw = Array.isArray(value) ? value[0] : value;
+      if (typeof raw !== "string") return "";
+      return raw.replace(/^\/(posts|pages|projects|docs)\//, "");
+    };
+
+    CMS.registerEditorComponent({
+      id: "image-relative",
+      label: "Immagine per Obsidian",
+      icon: "image",
+      trigger: "button",
+      fields: [
+        { name: "image", label: "Immagine", widget: "image" },
+        { name: "alt", label: "Testo alternativo", widget: "string", required: false },
+      ],
+      pattern: /^!\[(?<alt>[^\]]*)\]\((?<image>(?!https?:|\/)[^)]+)\)$/m,
+      fromBlock: (match) => ({
+        image: match.groups?.image ?? "",
+        alt: match.groups?.alt ?? "",
+      }),
+      toBlock: ({ image = "", alt = "" }) =>
+        `![${alt}](${toRelativeMedia(image)})`,
+      toPreview: ({ image = "", alt = "" }) =>
+        `<img src="${image}" alt="${alt}" style="max-width:100%;" />`,
     });
 
     // Componente: blocco codice con linguaggio esplicito (HTML/CSS/JS/...).

@@ -3,6 +3,10 @@ backend:
   repo: leonardo-2025-ai/AstroModularObsidian
   branch: main
 
+slug:
+  encoding: ascii
+  clean_accents: true
+
 media_folder: "src/content/posts/attachments"
 public_folder: "/posts/attachments"
 
@@ -54,7 +58,6 @@ field_defaults:
         italic,
         strikethrough,
         code,
-        heading-one,
         heading-two,
         heading-three,
         heading-four,
@@ -69,13 +72,12 @@ field_defaults:
         code-block,
         code-snippet,
         image,
+        image-relative,
         table,
         hr,
         notice,
         internal-link,
-        button,
         accordion,
-        tabs,
         map,
         youtube,
       ]
@@ -127,9 +129,10 @@ collections:
       - { label: "Nascondi cover", name: "hideCoverImage", widget: "boolean", required: false, default: false }
       - { label: "Nascondi TOC", name: "hideTOC", widget: "boolean", required: false, default: false }
       - { label: "Keyword target", name: "targetKeyword", widget: "string", required: false }
+      - { label: "Alias / URL precedenti", name: "aliases", widget: "list", required: false, hint: "Un vecchio slug per riga. Astro Modular crea il redirect automatico." }
       - { label: "No index", name: "noIndex", widget: "boolean", required: false, default: false }
       - { label: "Bozza", name: "draft", widget: "boolean", default: false }
-      - { label: "Contenuto", name: "body", widget: "markdown", hint: "Usa i pulsanti Tip/Avviso e Link interno nella toolbar." }
+      - { label: "Contenuto", name: "body", widget: "markdown", hint: "Usa i pulsanti Callout e Link interno nella toolbar." }
 
   # 2. Pagine
   - name: "pages"
