@@ -223,7 +223,7 @@ export const siteConfig: SiteConfig = {
   },
   layout: {
     // [CONFIG:LAYOUT_CONTENT_WIDTH]
-    contentWidth: "50em",
+    contentWidth: "45em",
     // [CONFIG:LAYOUT_PRESERVE_COVER_ASPECT_RATIO]
     preserveCoverAspectRatio: true, // When true, detail-page covers use 16:9. When false, use the previous fixed-height banner.
   },
@@ -246,7 +246,7 @@ export const siteConfig: SiteConfig = {
   // [CONFIG:SCROLL_TO_TOP]
   scrollToTop: true,
   // [CONFIG:FEATURE_BUTTON]
-  featureButton: "none", // "mode" | "graph" | "theme" | "none"
+  featureButton: "mode", // "mode" | "graph" | "theme" | "none"
   deployment: {
     // [CONFIG:DEPLOYMENT_PLATFORM]
     platform: "cloudflare-workers", // "netlify" | "vercel" | "github-pages" | "cloudflare-workers" - sets redirect configuration for the chosen platform (Cloudflare Workers uses Workers-compatible config)
@@ -386,9 +386,9 @@ export const siteConfig: SiteConfig = {
       // [CONFIG:POST_OPTIONS_LINKED_MENTIONS_COMPACT]
       linkedMentionsCompact: false,
     },
-    graphView: {
+      enabled: true,
       // [CONFIG:POST_OPTIONS_GRAPH_VIEW_ENABLED]
-      enabled: false,
+      showInSidebar: true,
       // [CONFIG:POST_OPTIONS_GRAPH_VIEW_SHOW_IN_SIDEBAR]
       showInSidebar: false,
       // [CONFIG:POST_OPTIONS_GRAPH_VIEW_MAX_NODES]
