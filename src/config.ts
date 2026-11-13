@@ -223,7 +223,7 @@ export const siteConfig: SiteConfig = {
   },
   layout: {
     // [CONFIG:LAYOUT_CONTENT_WIDTH]
-    contentWidth: "60rem",
+    contentWidth: "50em",
     // [CONFIG:LAYOUT_PRESERVE_COVER_ASPECT_RATIO]
     preserveCoverAspectRatio: true, // When true, detail-page covers use 16:9. When false, use the previous fixed-height banner.
   },
