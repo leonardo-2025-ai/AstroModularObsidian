@@ -206,7 +206,7 @@ export const siteConfig: SiteConfig = {
   // [CONFIG:CUSTOM_THEME_FILE]
   customThemeFile: "custom", // Only used if theme is set to "custom" above. Filename in src/themes/custom/ (without .ts extension)
   // [CONFIG:AVAILABLE_THEMES]
-  availableThemes: ["oxygen", "minimal", "things"], // "default" to show all built-in themes, or array of theme names like ["oxygen", "minimal", "obsidianite"] to limit choices (can include custom theme filenames)
+  availableThemes: "default", // "default" to show all built-in themes, or array of theme names like ["oxygen", "minimal", "obsidianite"] to limit choices (can include custom theme filenames)
   fonts: {
     // [CONFIG:FONT_SOURCE]
     source: "local", // "local" for self-hosted @fontsource fonts, "cdn" for Google Fonts CDN
@@ -272,7 +272,7 @@ export const siteConfig: SiteConfig = {
     },
     sections: {
       // [CONFIG:COMMAND_PALETTE_SECTIONS_QUICK_ACTIONS]
-      quickActions: false,
+      quickActions: true,
       // [CONFIG:COMMAND_PALETTE_SECTIONS_PAGES]
       pages: true,
       // [CONFIG:COMMAND_PALETTE_SECTIONS_SOCIAL]
@@ -280,7 +280,7 @@ export const siteConfig: SiteConfig = {
     },
     quickActions: {
       // [CONFIG:COMMAND_PALETTE_QUICK_ACTIONS_ENABLED]
-      enabled: false,
+      enabled: true,
       // [CONFIG:COMMAND_PALETTE_QUICK_ACTIONS_TOGGLE_MODE]
       toggleMode: true,
       // [CONFIG:COMMAND_PALETTE_QUICK_ACTIONS_GRAPH_VIEW]
